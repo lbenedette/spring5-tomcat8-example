@@ -1,9 +1,49 @@
+group 'com.auth0.samples'
+version '1.0-SNAPSHOT'
+
 apply plugin: 'java'
+
+// 1 - apply application and shadow plugins
+apply plugin: 'application'
+apply plugin: 'com.github.johnrengelman.shadow'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+mainClassName = 'com.auth0.samples.Main'
+
+// 2 - define the dependency to the shadow plugin
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.1'
+    }
+}
+
+// 3 - merge service descriptors
+shadowJar {
+    mergeServiceFiles()
+}
 
 repositories {
     jcenter()
+    maven {
+        url 'https://repo.spring.io/plugins-release/'
+    }
 }
 
 dependencies {
+    compile('org.apache.tomcat.embed:tomcat-embed-jasper:8.0.47')
+    compile('org.springframework:spring-webmvc:5.0.1.RELEASE')
 
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.2'
+
+    compile('com.auth0:auth0-spring-security-api:1.0.0-rc.3') {
+        exclude module: 'spring-security-config'
+        exclude module: 'spring-security-core'
+        exclude module: 'spring-security-web'
+    }
+    compile('org.springframework.security:spring-security-config:5.0.0.RC1')
+    compile('org.springframework.security:spring-security-web:5.0.0.RC1')
 }
